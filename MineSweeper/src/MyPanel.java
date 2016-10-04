@@ -47,7 +47,7 @@ public class MyPanel extends JPanel {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
 			mineArray[x][y] = 1;
-//			colorArray[x][y] = Color.BLACK;
+			colorArray[x][y] = Color.BLACK;
 			counter++;
 		} while (counter < 10);
 
@@ -80,6 +80,31 @@ public class MyPanel extends JPanel {
 		}
 
 	}
+public boolean isBomb (int x, int y){
+		if(mineArray[x][y]==1){
+		return true;
+		}
+		else return false;
+	}
+public int countMines(int x, int y){
+	int counter =0;
+	// The for loops should not consider indexes that are not in the grid
+	for (int i=-1; i<2; i++){
+		if(x+i<0|| x+i > TOTAL_COLUMNS){
+			continue;
+		}
+		for(int j=-1; j<2;j++){
+			if(y+j<0 || y+j > TOTAL_ROWS){
+				continue;
+			}
+			else if (isBomb((x+i),(y+j))){
+				counter++;
+			}
+			
+		}
+	}
+	return counter; // Dummy return 
+}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
