@@ -38,7 +38,7 @@ public class MyPanel extends JPanel {
 		Color cellColor = new Color(205, 205, 205);
 		for (int x = 0; x < TOTAL_COLUMNS; x++) {   //The rest of the grid
 			for (int y = 0; y < TOTAL_ROWS; y++) {
-				colorArray[x][y] = cellColor;
+				colorArray[x][y] = Color.WHITE;
 			}
 		}
 		//Paint Mines
@@ -47,28 +47,30 @@ public class MyPanel extends JPanel {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
 			mineArray[x][y] = 1;
-			colorArray[x][y] = Color.BLACK;
+//			colorArray[x][y] = Color.BLACK;
 			counter++;
 		} while (counter < 10);
-		
+
 		//Paint Numbers
-		do {
-			for (int x = 0; x < TOTAL_COLUMNS; x++) {
-				for (int y = 0; y < TOTAL_ROWS; y++) {
-					if (mineArray[x][y] == 1) {
-						for (int m = x-1; m<x+2; m++) {
-							for (int n = y-1; n<x+2; n++) {
-								System.out.println("[" + m + ", " + n + "]");
-								colorArray[x][y] = Color.BLUE; 
-								counter++;
-							}
-						}
-					}
-				}				
-			}
-		} while (counter < 10);
-		
-		
+//		do {
+//			for (int x = 0; x < TOTAL_COLUMNS; x++) {
+//				for (int y = 0; y < TOTAL_ROWS; y++) {
+//					if (mineArray[x][y] == 1) {
+//						for (int m = x-1; m<x+2; m++) {
+//							for (int n = y-1; n<y+2; n++) {
+//								if ((m>=0 && n>=0) && (m<=8 && n<=8)) {
+//									colorArray[m][n] = Color.BLUE;
+//									System.out.println("[" + m + ", " + n + "]");
+//								}
+//								counter++;
+//							}
+//						}
+//					}
+//				}				
+//			}
+//		} while (counter < 10);
+
+
 		for (int y = 0; y < TOTAL_ROWS; y++) {
 			for (int x = 0; x < TOTAL_COLUMNS; x++) {
 				if (!(mineArray[x][y] == 1)) {
@@ -131,15 +133,15 @@ public class MyPanel extends JPanel {
 		}
 		x = x / (INNER_CELL_SIZE + 1);
 		y = y / (INNER_CELL_SIZE + 1);
-//		if (x == 0 && y == TOTAL_ROWS - 1) {    //The lower left extra cell
-//			return x;
-//		}
+		//		if (x == 0 && y == TOTAL_ROWS - 1) {    //The lower left extra cell
+		//			return x;
+		//		}
 		if (x < 0 || x > TOTAL_COLUMNS - 1 || y < 0 || y > TOTAL_ROWS - 1) {   //Outside the rest of the grid
 			return -1;
 		}
 		return x;
 	}
-	
+
 	public int getGridY(int x, int y) {
 		Insets myInsets = getInsets();
 		int x1 = myInsets.left;
@@ -157,9 +159,9 @@ public class MyPanel extends JPanel {
 		}
 		x = x / (INNER_CELL_SIZE + 1);
 		y = y / (INNER_CELL_SIZE + 1);
-//		if (x == 0 && y == TOTAL_ROWS - 1) {    //The lower left extra cell
-//			return y;
-//		}
+		//		if (x == 0 && y == TOTAL_ROWS - 1) {    //The lower left extra cell
+		//			return y;
+		//		}
 		if (x < 0 || x > TOTAL_COLUMNS - 1 || y < 0 || y > TOTAL_ROWS - 1) {   //Outside the rest of the grid
 			return -1;
 		}

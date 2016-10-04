@@ -108,13 +108,13 @@ public class MyMouseAdapter extends MouseAdapter {
 						Color pCell = new Color(177, 177, 177);
 						if (myPanel.mineArray[gridX][gridY] == 0) {
 							myPanel.mineArray[gridX][gridY] = 2;
-							myPanel.colorArray[gridX][gridY] = pCell;
+							myPanel.colorArray[gridX][gridY] = Color.GRAY;
 							myPanel.repaint();
 						}
 						//PERDIO!!!
 						else if (myPanel.mineArray[gridX][gridY] == 1) {
 							myPanel.mineArray[gridX][gridY] = 1;
-							myPanel.colorArray[gridX][gridY] = Color.GREEN;
+							myPanel.colorArray[gridX][gridY] = Color.BLACK;
 							myPanel.repaint();
 						}
 						else if (myPanel.mineArray[gridX][gridY] == 2) {
