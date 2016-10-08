@@ -159,34 +159,39 @@ The countMines ignores cells that are outside the panel.*/
 			for(int j =0; j < TOTAL_ROWS; j++){
 				if(!isMine(i, j) && !isCovered(i,j) ){
 					g.setColor(Color.MAGENTA);
-				int number = countMines(i, j);
-					if(countMines(i,j)==0){
+				switch(countMines(i,j)){
+				case 0:
 						g.setColor(Color.MAGENTA);
 						g.drawString("0", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						break;
 						
-					}
-					else if(countMines(i,j)==1){
+					
+				case 1:
 						g.setColor(Color.BLUE);
 						g.drawString("1", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						break;
 						
-					}
-					else if(countMines(i,j)==2){
+					
+				case 2:
 						Color darkGreen = new Color(0,153,0);
 						g.setColor(darkGreen);
 						g.drawString("2", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						break;
 						
-					}
-					else if(countMines(i,j)==3){
+					
+				case 3:
 						g.setColor(Color.RED);
 						g.drawString("3", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						break;
 						
-					}
-					else if(countMines(i,j)==4){
+					
+				case 4:
 						Color darkBlue = new Color (0,0,102);
 						g.setColor(darkBlue);
 						g.drawString("4", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						break;
 						
-					}
+				}
 				
 				}
 			}
