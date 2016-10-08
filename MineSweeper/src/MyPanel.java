@@ -80,30 +80,33 @@ public class MyPanel extends JPanel {
 		}
 
 	}
-public boolean isBomb (int x, int y){
+public boolean isMine(int x, int y){
 		if(mineArray[x][y]==1){
+			
 		return true;
 		}
+		
 		else return false;
 	}
 public int countMines(int x, int y){
 	int counter =0;
 	// The for loops should not consider indexes that are not in the grid
 	for (int i=-1; i<2; i++){
-		if(x+i<0|| x+i > TOTAL_COLUMNS){
+		if(x+i<0|| x+i > TOTAL_COLUMNS-1){
 			continue;
 		}
 		for(int j=-1; j<2;j++){
-			if(y+j<0 || y+j > TOTAL_ROWS){
+			if(y+j<0 || y+j > TOTAL_ROWS-1){
 				continue;
 			}
-			else if (isBomb((x+i),(y+j))){
+			else if (isMine((x+i),(y+j))){
 				counter++;
 			}
 			
 		}
 	}
-	return counter; // Dummy return 
+	System.out.println(counter);
+	return counter;  
 }
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);

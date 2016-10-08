@@ -106,22 +106,25 @@ public class MyMouseAdapter extends MouseAdapter {
 						//Do nothing
 					} else {
 						Color pCell = new Color(177, 177, 177);
-						if (myPanel.mineArray[gridX][gridY] == 0) {
+						if (!myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 2;
-							myPanel.colorArray[gridX][gridY] = Color.GRAY;
+							// Color changes to Gray because it was not a mine and was uncovered
+							myPanel.colorArray[gridX][gridY] = pCell;
+							myPanel.countMines(gridX, gridY);
 							myPanel.repaint();
 						}
 						//PERDIO!!!
-						else if (myPanel.mineArray[gridX][gridY] == 1) {
+						else if (myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 1;
+							// Changes the color to Black and the person loses the game.
 							myPanel.colorArray[gridX][gridY] = Color.BLACK;
 							myPanel.repaint();
 						}
-						else if (myPanel.mineArray[gridX][gridY] == 2) {
-						}
-						else if (myPanel.mineArray[gridX][gridY] == 3 
-								|| myPanel.mineArray[gridX][gridY] == 4) {
-						}
+//						else if (myPanel.mineArray[gridX][gridY] == 2) {
+//						}
+//						else if (myPanel.mineArray[gridX][gridY] == 3 
+//								|| myPanel.mineArray[gridX][gridY] == 4) {
+//						}
 					}
 				}
 			}
@@ -176,17 +179,22 @@ public class MyMouseAdapter extends MouseAdapter {
 						}
 						else if (myPanel.mineArray[gridX][gridY] == 3) {
 							myPanel.mineArray[gridX][gridY] = 0;
-							myPanel.colorArray[gridX][gridY] = cellColor;
+							myPanel.colorArray[gridX][gridY] = Color.WHITE;
 							myPanel.repaint();
 						}
 						else if (myPanel.mineArray[gridX][gridY] == 4) {
 							myPanel.mineArray[gridX][gridY] = 1;
-							myPanel.colorArray[gridX][gridY] = cellColor;
+							myPanel.colorArray[gridX][gridY] = Color.WHITE;
 							myPanel.repaint();
 						}
 					}
 				}
 			}
+			// 0 = no mine
+			// 1 = mine
+			// 2 = played
+			// 3 = flagged | no mine
+			// 4 = flagged | mine
 			break;
 		}
 		default:    //Some other button (2 = Middle mouse button, etc.)
