@@ -82,10 +82,8 @@ public class MyPanel extends JPanel {
 	}
 	//1 & 4 are mines
 	public boolean isMine(int x, int y){
-		if(mineArray[x][y]==1 || mineArray[x][y]==4) {
-			return true;
-		}
-		else return false;
+		return (mineArray[x][y]==1 || mineArray[x][y]==4);
+		
 	}
 
 	public boolean isCovered(int x, int y) {
