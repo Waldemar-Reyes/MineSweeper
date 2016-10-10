@@ -3,7 +3,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
+//import java.util.Random;
 
 import javax.swing.JFrame;
 
@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 // 4 = flagged | mine
 
 public class MyMouseAdapter extends MouseAdapter {
-	private Random generator = new Random();
+	//	private Random generator = new Random();
 	public void mousePressed(MouseEvent e) {
 		switch (e.getButton()) {
 		case 1:	{	//Left mouse button
@@ -113,18 +113,18 @@ public class MyMouseAdapter extends MouseAdapter {
 							myPanel.countMines(gridX, gridY);
 							myPanel.repaint();
 						}
-						//PERDIO!!!
+						//Player lost!
 						else if (myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 1;
 							// Changes the color to Black and the person loses the game.
 							myPanel.colorArray[gridX][gridY] = Color.BLACK;
 							myPanel.repaint();
 						}
-//						else if (myPanel.mineArray[gridX][gridY] == 2) {
-//						}
-//						else if (myPanel.mineArray[gridX][gridY] == 3 
-//								|| myPanel.mineArray[gridX][gridY] == 4) {
-//						}
+						//						else if (myPanel.mineArray[gridX][gridY] == 2) {
+						//						}
+						//						else if (myPanel.mineArray[gridX][gridY] == 3 
+						//								|| myPanel.mineArray[gridX][gridY] == 4) {
+						//						}
 					}
 				}
 			}
@@ -163,8 +163,8 @@ public class MyMouseAdapter extends MouseAdapter {
 						//Released the mouse button on a different cell where it was pressed
 						//Do nothing
 					} else {
-						Color cellColor = new Color(205, 205, 205);
-						Color pCell = new Color(177, 177, 177);
+						//						Color cellColor = new Color(205, 205, 205);
+						//						Color pCell = new Color(177, 177, 177);
 						if (myPanel.mineArray[gridX][gridY] == 0) {
 							myPanel.mineArray[gridX][gridY] = 3;
 							myPanel.colorArray[gridX][gridY] = Color.RED;

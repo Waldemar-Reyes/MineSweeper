@@ -36,7 +36,7 @@ public class MyPanel extends JPanel {
 		//		for (int y = 0; y < TOTAL_ROWS; y++) {   //Left column
 		//			colorArray[0][y] = Color.LIGHT_GRAY;
 		//		}
-		Color cellColor = new Color(205, 205, 205);
+		//		Color cellColor = new Color(205, 205, 205);
 		for (int x = 0; x < TOTAL_COLUMNS; x++) {   //The rest of the grid
 			for (int y = 0; y < TOTAL_ROWS; y++) {
 				colorArray[x][y] = Color.WHITE;
@@ -70,8 +70,8 @@ public class MyPanel extends JPanel {
 		//				}				
 		//			}
 		//		} while (counter < 10);
-
-
+		
+		//Set cells without mines
 		for (int y = 0; y < TOTAL_ROWS; y++) {
 			for (int x = 0; x < TOTAL_COLUMNS; x++) {
 				if (!(mineArray[x][y] == 1)) {
@@ -79,46 +79,43 @@ public class MyPanel extends JPanel {
 				}
 			}
 		}
-
 	}
+	//1 & 4 are mines
 	public boolean isMine(int x, int y){
-		if(mineArray[x][y]==1){
-
+		if(mineArray[x][y]==1 || mineArray[x][y]==4) {
 			return true;
 		}
-
 		else return false;
 	}
-	public boolean isCovered(int x, int y){
-		return (colorArray[x][y]==Color.WHITE);
+
+	public boolean isCovered(int x, int y) {
+		return (colorArray[x][y] == Color.WHITE);
 	}
 	/* The countMines method counts the mines that are adjacent to the selected cell.
- The approach is similar to that of finding the adjacent cell in a Cartesian plane.
-The countMines ignores cells that are outside the panel.*/
-	public int countMines(int x, int y){
-		int counter =0;
+	The approach is similar to that of finding the adjacent cell in a Cartesian plane.
+	The countMines ignores cells that are outside the panel.*/
+	public int countMines(int x, int y) {
+		int counter = 0;
 		// The for loops do not consider indexes that are not in the grid.
-		for (int i=-1; i<2; i++){
-			if(x+i<0|| x+i > TOTAL_COLUMNS-1){
+		for (int i = -1; i < 2; i++){
+			if((x+i)<0 || (x+i)>TOTAL_COLUMNS-1) {
 				continue;
 			}
-			for(int j=-1; j<2;j++){
-				if(y+j<0 || y+j > TOTAL_ROWS-1){
+			for(int j = -1; j < 2; j++) {
+				if((y+j)<0 || (y+j)>TOTAL_ROWS-1) {
 					continue;
 				}
-				else if (isMine((x+i),(y+j))){
+				else if (isMine((x+i), (y+j))) {
 					counter++;
 				}
-
 			}
 		}
 		System.out.println(counter);
 		return counter;  
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
 
 		//Compute interior coordinates
 		Insets myInsets = getInsets();
@@ -133,10 +130,8 @@ The countMines ignores cells that are outside the panel.*/
 		Color bgColor = new Color(136, 136, 136);
 		g.setColor(bgColor);
 		g.fillRect(x1, y1, width + 1, height + 1);
-		
 
 		//Draw the grid minus the bottom row (which has only one cell)
-		//By default, the grid will be 10x10 (see above: TOTAL_COLUMNS and TOTAL_ROWS)
 		g.setColor(Color.BLACK);
 		for (int y = 0; y <= TOTAL_ROWS; y++) {
 			g.drawLine(x1 + GRID_X, y1 + GRID_Y + (y * (INNER_CELL_SIZE + 1)), x1 + GRID_X + ((INNER_CELL_SIZE + 1) * TOTAL_COLUMNS), y1 + GRID_Y + (y * (INNER_CELL_SIZE + 1)));
@@ -153,71 +148,66 @@ The countMines ignores cells that are outside the panel.*/
 				g.fillRect(x1 + GRID_X + (x * (INNER_CELL_SIZE + 1)) + 1, y1 + GRID_Y + (y * (INNER_CELL_SIZE + 1)) + 1, INNER_CELL_SIZE, INNER_CELL_SIZE);
 			}
 		}
+
 		Font times = new Font("TimesRoman", Font.PLAIN, 16);
 		g.setFont(times);
-		for(int i =0;  i< TOTAL_COLUMNS;  i++){
-			for(int j =0; j < TOTAL_ROWS; j++){
-				if(!isMine(i, j) && !isCovered(i,j) ){
+		for (int i = 0;  i< TOTAL_COLUMNS;  i++) {
+			for (int j = 0; j < TOTAL_ROWS; j++) {
+				if (!isMine(i,j) && !isCovered(i,j)) {
 					g.setColor(Color.MAGENTA);
-				switch(countMines(i,j)){
-				case 0:
+					switch(countMines(i,j)) {
+					case 0:
 						g.setColor(Color.MAGENTA);
 						g.drawString("0", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
 						break;
-						
-					
-				case 1:
+					case 1:
 						g.setColor(Color.BLUE);
 						g.drawString("1", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
 						break;
-						
-					
-				case 2:
+					case 2:
 						Color darkGreen = new Color(0,153,0);
 						g.setColor(darkGreen);
 						g.drawString("2", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
 						break;
-						
-					
-				case 3:
+					case 3:
 						g.setColor(Color.RED);
 						g.drawString("3", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
 						break;
-						
-					
-				case 4:
+					case 4:
 						Color darkBlue = new Color (0,0,102);
 						g.setColor(darkBlue);
 						g.drawString("4", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
-						break;
-						
-				}
-				
+						break;	
+					}
+					if (countMines(i,j) == 0) {
+					}
 				}
 			}
 		}
 	}
+
 	public int getGridX(int x, int y) {
 		Insets myInsets = getInsets();
 		int x1 = myInsets.left;
 		int y1 = myInsets.top;
 		x = x - x1 - GRID_X;
 		y = y - y1 - GRID_Y;
-		if (x < 0) {   //To the left of the grid
+		if (x < 0) {
+			//To the left of the grid
 			return -1;
 		}
-		if (y < 0) {   //Above the grid
+		if (y < 0) {
+			//Above the grid
 			return -1;
 		}
-		if ((x % (INNER_CELL_SIZE + 1) == 0) || (y % (INNER_CELL_SIZE + 1) == 0)) {   //Coordinate is at an edge; not inside a cell
+		if ((x % (INNER_CELL_SIZE + 1) == 0) || (y % (INNER_CELL_SIZE + 1) == 0)) {
+			//Coordinate is at an edge; not inside a cell
 			return -1;
 		}
 		x = x / (INNER_CELL_SIZE + 1);
 		y = y / (INNER_CELL_SIZE + 1);
-		//		if (x == 0 && y == TOTAL_ROWS - 1) {    //The lower left extra cell
-		//			return x;
-		//		}
-		if (x < 0 || x > TOTAL_COLUMNS - 1 || y < 0 || y > TOTAL_ROWS - 1) {   //Outside the rest of the grid
+		if (x < 0 || x > TOTAL_COLUMNS - 1 || y < 0 || y > TOTAL_ROWS - 1) {
+			//Outside the rest of the grid
 			return -1;
 		}
 		return x;
@@ -229,21 +219,22 @@ The countMines ignores cells that are outside the panel.*/
 		int y1 = myInsets.top;
 		x = x - x1 - GRID_X;
 		y = y - y1 - GRID_Y;
-		if (x < 0) {   //To the left of the grid
+		if (x < 0) {
+			//To the left of the grid
 			return -1;
 		}
-		if (y < 0) {   //Above the grid
+		if (y < 0) {
+			//Above the grid
 			return -1;
 		}
-		if ((x % (INNER_CELL_SIZE + 1) == 0) || (y % (INNER_CELL_SIZE + 1) == 0)) {   //Coordinate is at an edge; not inside a cell
+		if ((x % (INNER_CELL_SIZE + 1) == 0) || (y % (INNER_CELL_SIZE + 1) == 0)) {
+			//Coordinate is at an edge; not inside a cell
 			return -1;
 		}
 		x = x / (INNER_CELL_SIZE + 1);
 		y = y / (INNER_CELL_SIZE + 1);
-		//		if (x == 0 && y == TOTAL_ROWS - 1) {    //The lower left extra cell
-		//			return y;
-		//		}
-		if (x < 0 || x > TOTAL_COLUMNS - 1 || y < 0 || y > TOTAL_ROWS - 1) {   //Outside the rest of the grid
+		if (x < 0 || x > TOTAL_COLUMNS - 1 || y < 0 || y > TOTAL_ROWS - 1) {
+			//Outside the rest of the grid
 			return -1;
 		}
 		return y;
