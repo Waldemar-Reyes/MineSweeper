@@ -87,7 +87,21 @@ public class MyPanel extends JPanel {
 	}
 
 	public boolean isCovered(int x, int y) {
-		return (colorArray[x][y] == Color.WHITE);
+		return (colorArray[x][y].equals(Color.WHITE));
+	}
+	public boolean isFillable(int x, int y){
+		for (int i = -1; i < 2; i++){
+			if((x+i)<-1 || (x+i)>TOTAL_COLUMNS ) {
+				return false;
+			}
+			for(int j = -1; j < 2; j++) {
+				if((y+j)<-1 || (y+j)>TOTAL_ROWS) {
+					return false;
+				}
+				
+			}
+		}
+		return (!isMine(x,y)&&isCovered(x,y));
 	}
 	/* The countMines method counts the mines that are adjacent to the selected cell.
 	The approach is similar to that of finding the adjacent cell in a Cartesian plane.
@@ -110,6 +124,20 @@ public class MyPanel extends JPanel {
 		}
 		System.out.println(counter);
 		return counter;  
+	}
+	public void floodFillAdjacent(int x, int y){
+		Color pressedCell = new Color(177, 177, 177);
+		if(isFillable(x,y) && countMines(x,y)==0){
+			colorArray[x][y]= pressedCell;
+			floodFillAdjacent( x+1, y );
+		    floodFillAdjacent( x-1, y );
+		    floodFillAdjacent( x, y-1 );
+		    floodFillAdjacent( x, y+1 );
+		}
+		else if (countMines(x,y)>0){
+			colorArray[x][y]= pressedCell;
+		}
+		else return;
 	}
 
 	public void paintComponent(Graphics g) {
@@ -147,7 +175,7 @@ public class MyPanel extends JPanel {
 			}
 		}
 
-		Font times = new Font("TimesRoman", Font.PLAIN, 16);
+		Font times = new Font("TimesRoman", Font.PLAIN, 22);
 		g.setFont(times);
 		for (int i = 0;  i< TOTAL_COLUMNS;  i++) {
 			for (int j = 0; j < TOTAL_ROWS; j++) {
@@ -156,25 +184,25 @@ public class MyPanel extends JPanel {
 					switch(countMines(i,j)) {
 					case 0:
 						g.setColor(Color.MAGENTA);
-						g.drawString("0", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						g.drawString("0", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
 						break;
 					case 1:
 						g.setColor(Color.BLUE);
-						g.drawString("1", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						g.drawString("1", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
 						break;
 					case 2:
 						Color darkGreen = new Color(0,153,0);
 						g.setColor(darkGreen);
-						g.drawString("2", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						g.drawString("2", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
 						break;
 					case 3:
 						g.setColor(Color.RED);
-						g.drawString("3", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						g.drawString("3", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
 						break;
 					case 4:
 						Color darkBlue = new Color (0,0,102);
 						g.setColor(darkBlue);
-						g.drawString("4", i*INNER_CELL_SIZE+35, j*INNER_CELL_SIZE+45);
+						g.drawString("4", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
 						break;	
 					}
 					if (countMines(i,j) == 0) {

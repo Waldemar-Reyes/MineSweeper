@@ -105,12 +105,14 @@ public class MyMouseAdapter extends MouseAdapter {
 						//Released the mouse button on a different cell where it was pressed
 						//Do nothing
 					} else {
-						Color pCell = new Color(177, 177, 177);
+						Color pressedCell = new Color(177, 177, 177);
 						if (!myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 2;
 							// Color changes to Gray because it was not a mine and was uncovered
-							myPanel.colorArray[gridX][gridY] = pCell;
+							
+							myPanel.floodFillAdjacent(gridX, gridY);
 							myPanel.countMines(gridX, gridY);
+							myPanel.colorArray[gridX][gridY] = pressedCell;
 							myPanel.repaint();
 						}
 						//Player lost!
