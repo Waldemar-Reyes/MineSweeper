@@ -3,11 +3,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
-//import java.util.Random;
-
 import javax.swing.JFrame;
-
 
 // 0 = no mine
 // 1 = mine
@@ -16,7 +12,6 @@ import javax.swing.JFrame;
 // 4 = flagged | mine
 
 public class MyMouseAdapter extends MouseAdapter {
-	//	private Random generator = new Random();
 	public void mousePressed(MouseEvent e) {
 		switch (e.getButton()) {
 		case 1:	{	//Left mouse button
@@ -72,7 +67,6 @@ public class MyMouseAdapter extends MouseAdapter {
 		}
 	}
 	public void mouseReleased(MouseEvent e) {
-		int counter =0;
 		switch (e.getButton()) {
 		case 1:	{	//Left mouse button
 			Component c = e.getComponent();
@@ -96,45 +90,34 @@ public class MyMouseAdapter extends MouseAdapter {
 			int gridY = myPanel.getGridY(x, y);
 
 			if ((myPanel.mouseDownGridX == -1) || (myPanel.mouseDownGridY == -1)) {
-				
-				
-				
 			} else {
 				if ((gridX == -1) || (gridY == -1)) {
 					//Is releasing outside
-					//Do nothing
 				} else {
 					if ((myPanel.mouseDownGridX != gridX) || (myPanel.mouseDownGridY != gridY)) {
 						//Released the mouse button on a different cell where it was pressed
-						//Do nothing
 					} else {
 						Color pressedCell = new Color(177, 177, 177);
 						if (!myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 2;
 							// Color changes to Gray because it was not a mine and was uncovered
-							
 							myPanel.floodFillAdjacent(gridX, gridY);
 							myPanel.countMines(gridX, gridY);
 							myPanel.colorArray[gridX][gridY] = pressedCell;
-							if(myPanel.checkWin(myPanel.counterNonMines())){
-								JOptionPane.showMessageDialog(null, "You won! :) ", "", JOptionPane.WARNING_MESSAGE);
-							}
 							myPanel.repaint();
+							if(myPanel.checkWin(myPanel.counterNonMines())){
+								System.out.println("WON");
+								myPanel.playerFinished = true;
+							}
 						}
 						//Player lost!
+						// Changes the color to Black and the person loses the game
 						else if (myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 1;
-							// Changes the color to Black and the person loses the game.
 							myPanel.revealAllBombs();
-							
 							myPanel.repaint();
-							JOptionPane.showMessageDialog(null, "You lost :( ", "", JOptionPane.WARNING_MESSAGE);
+							myPanel.playerFinished = true;
 						}
-						//						else if (myPanel.mineArray[gridX][gridY] == 2) {
-						//						}
-						//						else if (myPanel.mineArray[gridX][gridY] == 3 
-						//								|| myPanel.mineArray[gridX][gridY] == 4) {
-						//						}
 					}
 				}
 			}
@@ -163,18 +146,13 @@ public class MyMouseAdapter extends MouseAdapter {
 
 			if ((myPanel.mouseDownGridX == -1) || (myPanel.mouseDownGridY == -1)) {
 				//Had pressed outside
-				//Do nothing
 			} else {
 				if ((gridX == -1) || (gridY == -1)) {
 					//Is releasing outside
-					//Do nothing
 				} else {
 					if ((myPanel.mouseDownGridX != gridX) || (myPanel.mouseDownGridY != gridY)) {
 						//Released the mouse button on a different cell where it was pressed
-						//Do nothing
 					} else {
-						//						Color cellColor = new Color(205, 205, 205);
-						//						Color pCell = new Color(177, 177, 177);
 						if (myPanel.mineArray[gridX][gridY] == 0) {
 							myPanel.mineArray[gridX][gridY] = 3;
 							myPanel.colorArray[gridX][gridY] = Color.RED;

@@ -3,7 +3,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.util.Random;
-
 import javax.swing.JPanel;
 
 public class MyPanel extends JPanel {
@@ -15,14 +14,15 @@ public class MyPanel extends JPanel {
 	private static final int TOTAL_ROWS = 9;
 	private static int numberOfMines =10;
 	private Random generator = new Random();
+	public boolean playerFinished() { return playerFinished; }
 	public int x = -1;
 	public int y = -1;
-	 
 	public int mouseDownGridX = 0;
 	public int mouseDownGridY = 0;
 	public Color[][] colorArray = new Color[TOTAL_COLUMNS][TOTAL_ROWS];
 	public int[][] mineArray = new int[TOTAL_COLUMNS][TOTAL_ROWS];
 	public Color pressedCellColor = new Color(177, 177, 177);
+
 	public MyPanel() {   //This is the constructor... this code runs first to initialize
 		if (INNER_CELL_SIZE + (new Random()).nextInt(1) < 1) {	//Use of "random" to prevent unwanted Eclipse warning
 			throw new RuntimeException("INNER_CELL_SIZE must be positive!");
@@ -33,50 +33,27 @@ public class MyPanel extends JPanel {
 		if (TOTAL_ROWS + (new Random()).nextInt(1) < 3) {	//Use of "random" to prevent unwanted Eclipse warning
 			throw new RuntimeException("TOTAL_ROWS must be at least 3!");
 		}
-	
-		for (int x = 0; x < TOTAL_COLUMNS; x++) {   //The rest of the grid
+
+		//Paint blank(unplayed) cells
+		for (int x = 0; x < TOTAL_COLUMNS; x++) {
 			for (int y = 0; y < TOTAL_ROWS; y++) {
 				colorArray[x][y] = Color.WHITE;
 			}
 		}
-		
 		//Paint Mines
 		int counter = 0;
 		do {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
-			if(repeatedMines(x, y)){
+			if(repeatedMines(x, y)) {
 				continue;
 			}
 			mineArray[x][y] = 1;
-			
-			colorArray[x][y] = Color.WHITE;
-			
-			
+			////////////////////////////////// TESTING
+			colorArray[x][y] = Color.BLACK;
+			////////////////////////////////// ONLY!
 			counter++;
-			
-			
 		} while (counter < numberOfMines);
-
-		//Paint Numbers
-		//		do {
-		//			for (int x = 0; x < TOTAL_COLUMNS; x++) {
-		//				for (int y = 0; y < TOTAL_ROWS; y++) {
-		//					if (mineArray[x][y] == 1) {
-		//						for (int m = x-1; m<x+2; m++) {
-		//							for (int n = y-1; n<y+2; n++) {
-		//								if ((m>=0 && n>=0) && (m<=8 && n<=8)) {
-		//									colorArray[m][n] = Color.BLUE;
-		//									System.out.println("[" + m + ", " + n + "]");
-		//								}
-		//								counter++;
-		//							}
-		//						}
-		//					}
-		//				}				
-		//			}
-		//		} while (counter < 10);
-		
 		//Set cells without mines
 		for (int y = 0; y < TOTAL_ROWS; y++) {
 			for (int x = 0; x < TOTAL_COLUMNS; x++) {
@@ -86,73 +63,69 @@ public class MyPanel extends JPanel {
 			}
 		}
 	}
-	public boolean repeatedMines(int x, int y){
-		return (colorArray[x][y].equals(Color.BLACK));
+
+	public boolean repeatedMines(int x, int y) {
+		return (colorArray[x][y].equals(Color.BLACK)|| mineArray[x][y]==1);
 	}
-	//1 & 4 are mines
-	public boolean isMine(int x, int y){
+	// 1 = mine ** 4 = flagged | mine
+	public boolean isMine(int x, int y) {
 		return (mineArray[x][y]==1 || mineArray[x][y]==4);
-		
+
 	}
-//	public void resetGameBoard(){
-//		for (int y = 0; y < TOTAL_ROWS; y++) {
-//			for (int x = 0; x < TOTAL_COLUMNS; x++) {
-//				
-//			}
-//		}
-//	}
-public int counterNonMines(){
-	int countNonMines=0;
-	for (int y = 0; y < TOTAL_ROWS; y++) {
-		for (int x = 0; x < TOTAL_COLUMNS; x++) {
-			if(colorArray[x][y].equals(pressedCellColor)){
-				countNonMines++;
+	public boolean playerFinished = false;
+
+	public int counterNonMines(){
+		int countNonMines=0;
+		for (int y = 0; y < TOTAL_ROWS; y++) {
+			for (int x = 0; x < TOTAL_COLUMNS; x++) {
+				if(colorArray[x][y].equals(pressedCellColor)) {
+					countNonMines++;
+				}
 			}
 		}
+		////////////////////////////////// TESTING
+		System.out.println(countNonMines);
+		////////////////////////////////// ONLY!
+		return countNonMines;
 	}
-	System.out.println(countNonMines);
-	return countNonMines;
-}
 	public boolean isCovered(int x, int y) {
 		return (colorArray[x][y].equals(Color.WHITE));
 	}
-	public boolean isFillable(int x, int y){
+	public boolean isFillable(int x, int y) {
 		for (int i = -1; i < 2; i++){
-			if((x+i)<-1 || (x+i)>TOTAL_COLUMNS ) {
+			if((x+i) < -1 || (x+i) > TOTAL_COLUMNS ) {
 				return false;
 			}
 			for(int j = -1; j < 2; j++) {
-				if((y+j)<-1 || (y+j)>TOTAL_ROWS) {
+				if((y+j) < -1 || (y+j) > TOTAL_ROWS) {
 					return false;
 				}
-				
+
 			}
 		}
-		return (!isMine(x,y)&&isCovered(x,y));
+		return (!isMine(x,y) && isCovered(x,y));
 	}
-	// 0 = no mine
-				// 1 = mine
-				// 2 = played
-				// 3 = flagged | no mine
-				// 4 = flagged | mine
-	public boolean isFlagged(int x, int y){
+	// 3 = flagged | no mine ** 4 = flagged | mine
+	public boolean isFlagged(int x, int y) {
 		return (mineArray[x][y]==3 || mineArray[x][y]==4);
 	}
-	public boolean checkWin(int checkNumber){
+
+	public boolean checkWin(int checkNumber) {
 		return (checkNumber==TOTAL_COLUMNS*TOTAL_ROWS-numberOfMines);
 	}
+
 	/* The countMines method counts the mines that are adjacent to the selected cell.
 	The approach is similar to that of finding the adjacent cell in a Cartesian plane.
 	The countMines ignores cells that are outside the panel.*/
 	public int countMines(int x, int y) {
 		int counter = 0;
 		// The for loops do not consider indexes that are not in the grid.
-		for (int i = -1; i < 2; i++){
-			if((x+i)<0 || (x+i)>TOTAL_COLUMNS-1) {
+		for (int i = -1; i < 2; i++) {
+			if((x+i) < 0 || (x+i) > TOTAL_COLUMNS-1) {
 				continue;
 			}
 			for(int j = -1; j < 2; j++) {
-				if((y+j)<0 || (y+j)>TOTAL_ROWS-1) {
+				if((y+j) < 0 || (y+j) > TOTAL_ROWS-1) {
 					continue;
 				}
 				else if (isMine((x+i), (y+j))) {
@@ -160,42 +133,33 @@ public int counterNonMines(){
 				}
 			}
 		}
-		
 		return counter;  
 	}
-	// Implementation of the flood fill algorithm
-	public void floodFillAdjacent(int x, int y){
-		
-		if(isFillable(x,y) && countMines(x,y)==0){
+	/* Implementation of the flood fill algorithm.
+	This algorithm fills all of the cells other than those that are ignored 
+	by the program such as mines and numbers adjacent to those that more than one mine. */
+	public void floodFillAdjacent(int x, int y) {
+		if(isFillable(x,y) && countMines(x,y)==0) {
 			colorArray[x][y]= pressedCellColor;
-			
-			
 			floodFillAdjacent( x+1, y );
-		    floodFillAdjacent( x-1, y );
-		    floodFillAdjacent( x, y+1 );
-		    floodFillAdjacent( x, y-1 );
-		    
+			floodFillAdjacent( x-1, y );
+			floodFillAdjacent( x, y+1 );
+			floodFillAdjacent( x, y-1 );
 		}
-		else if (countMines(x,y)>0){
-			
-			
-			
+		else if (countMines(x,y) > 0) {
 			colorArray[x][y]= pressedCellColor;
-			
 		}
 		else return;
 	}
-	
-	public void revealAllBombs(){
+
+	public void revealAllBombs() {
 		for (int y = 0; y < TOTAL_ROWS; y++) {
-			for (int x = 0; x < TOTAL_COLUMNS; x++){
-				
-				if(isMine(x,y)){
+			for (int x = 0; x < TOTAL_COLUMNS; x++) {
+
+				if(isMine(x,y)) {
 					colorArray[x][y] = Color.BLACK;
 				}
 			}
-	
-		
 		}
 	}
 
@@ -241,12 +205,12 @@ public int counterNonMines(){
 				if(isFlagged(i,j)){
 					g.setColor(Color.RED);
 				}
-			else if (!isMine(i,j) && !isCovered(i,j)&&colorArray[i][j]!=Color.RED) {
+				else if (!isMine(i,j) && !isCovered(i,j) && colorArray[i][j] != Color.RED) {
 					g.setColor(Color.MAGENTA);
 					switch(countMines(i,j)) {
 					case 0:
 						g.setColor(Color.MAGENTA);
-						g.drawString("0", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
+						g.drawString("", i*INNER_CELL_SIZE+38, j*INNER_CELL_SIZE+50);
 						break;
 					case 1:
 						g.setColor(Color.BLUE);
