@@ -14,15 +14,15 @@ public class MyPanel extends JPanel {
 	private static final int TOTAL_ROWS = 9;
 	private static int numberOfMines =10;
 	private Random generator = new Random();
-	public boolean playerFinished() { return playerFinished; }
 	public int x = -1;
 	public int y = -1;
+	public boolean playerFinished = false;
+	public String endMessage = "";
 	public int mouseDownGridX = 0;
 	public int mouseDownGridY = 0;
 	public Color[][] colorArray = new Color[TOTAL_COLUMNS][TOTAL_ROWS];
 	public int[][] mineArray = new int[TOTAL_COLUMNS][TOTAL_ROWS];
 	public Color pressedCellColor = new Color(177, 177, 177);
-
 	public MyPanel() {   //This is the constructor... this code runs first to initialize
 		if (INNER_CELL_SIZE + (new Random()).nextInt(1) < 1) {	//Use of "random" to prevent unwanted Eclipse warning
 			throw new RuntimeException("INNER_CELL_SIZE must be positive!");
@@ -45,13 +45,13 @@ public class MyPanel extends JPanel {
 		do {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
-			if(repeatedMines(x, y)) {
+			if(repeatedMines(x, y)){
 				continue;
 			}
 			mineArray[x][y] = 1;
-			////////////////////////////////// TESTING
-			colorArray[x][y] = Color.BLACK;
-			////////////////////////////////// ONLY!
+			// -- Optional line | For Test Purposes
+			colorArray[x][y] = Color.WHITE;
+			// --
 			counter++;
 		} while (counter < numberOfMines);
 		//Set cells without mines
@@ -64,18 +64,19 @@ public class MyPanel extends JPanel {
 		}
 	}
 
+	public boolean playerFinished() { return playerFinished; }
+	public String endMessage() { return endMessage; }
+
 	public boolean repeatedMines(int x, int y) {
-		return (colorArray[x][y].equals(Color.BLACK)|| mineArray[x][y]==1);
+		return (colorArray[x][y].equals(Color.BLACK));
 	}
 	// 1 = mine ** 4 = flagged | mine
 	public boolean isMine(int x, int y) {
-		return (mineArray[x][y]==1 || mineArray[x][y]==4);
-
+		return (mineArray[x][y] == 1 || mineArray[x][y] == 4);
 	}
-	public boolean playerFinished = false;
 
-	public int counterNonMines(){
-		int countNonMines=0;
+	public int counterNonMines() {
+		int countNonMines = 0;
 		for (int y = 0; y < TOTAL_ROWS; y++) {
 			for (int x = 0; x < TOTAL_COLUMNS; x++) {
 				if(colorArray[x][y].equals(pressedCellColor)) {
@@ -83,14 +84,37 @@ public class MyPanel extends JPanel {
 				}
 			}
 		}
-		////////////////////////////////// TESTING
-		System.out.println(countNonMines);
-		////////////////////////////////// ONLY!
 		return countNonMines;
 	}
+
+	public void resetAllMinesToDefault() {
+		for (int y = 0; y < TOTAL_ROWS; y++) {
+			for (int x = 0; x < TOTAL_COLUMNS; x++) {
+				mineArray[x][y] = 0;
+				colorArray[x][y] = Color.WHITE;
+			}
+		}
+	}
+
+	public void resetMineField() {
+		resetAllMinesToDefault();
+		int counter = 0;
+		do {
+			int x = generator.nextInt(9);
+			int y = generator.nextInt(9);
+			if(repeatedMines(x, y)) {
+				continue;
+			}
+			mineArray[x][y] = 1;
+			colorArray[x][y] = Color.BLACK;
+			counter++;
+		} while (counter < numberOfMines);
+	}
+
 	public boolean isCovered(int x, int y) {
 		return (colorArray[x][y].equals(Color.WHITE));
 	}
+
 	public boolean isFillable(int x, int y) {
 		for (int i = -1; i < 2; i++){
 			if((x+i) < -1 || (x+i) > TOTAL_COLUMNS ) {
@@ -103,24 +127,22 @@ public class MyPanel extends JPanel {
 
 			}
 		}
-		return (!isMine(x,y) && isCovered(x,y));
+		return (!isMine(x,y)&&isCovered(x,y));
 	}
 	// 3 = flagged | no mine ** 4 = flagged | mine
-	public boolean isFlagged(int x, int y) {
-		return (mineArray[x][y]==3 || mineArray[x][y]==4);
+	public boolean isFlagged(int x, int y){
+		return (mineArray[x][y] == 3 || mineArray[x][y] == 4);
 	}
-
-	public boolean checkWin(int checkNumber) {
-		return (checkNumber==TOTAL_COLUMNS*TOTAL_ROWS-numberOfMines);
+	public boolean checkWin(int checkNumber){
+		return (checkNumber == TOTAL_COLUMNS*TOTAL_ROWS-numberOfMines);
 	}
-
 	/* The countMines method counts the mines that are adjacent to the selected cell.
 	The approach is similar to that of finding the adjacent cell in a Cartesian plane.
 	The countMines ignores cells that are outside the panel.*/
 	public int countMines(int x, int y) {
 		int counter = 0;
 		// The for loops do not consider indexes that are not in the grid.
-		for (int i = -1; i < 2; i++) {
+		for (int i = -1; i < 2; i++){
 			if((x+i) < 0 || (x+i) > TOTAL_COLUMNS-1) {
 				continue;
 			}
@@ -135,9 +157,7 @@ public class MyPanel extends JPanel {
 		}
 		return counter;  
 	}
-	/* Implementation of the flood fill algorithm.
-	This algorithm fills all of the cells other than those that are ignored 
-	by the program such as mines and numbers adjacent to those that more than one mine. */
+	// Implementation of the flood fill algorithm
 	public void floodFillAdjacent(int x, int y) {
 		if(isFillable(x,y) && countMines(x,y)==0) {
 			colorArray[x][y]= pressedCellColor;
@@ -146,7 +166,7 @@ public class MyPanel extends JPanel {
 			floodFillAdjacent( x, y+1 );
 			floodFillAdjacent( x, y-1 );
 		}
-		else if (countMines(x,y) > 0) {
+		else if (countMines(x,y)>0) {
 			colorArray[x][y]= pressedCellColor;
 		}
 		else return;
@@ -155,7 +175,6 @@ public class MyPanel extends JPanel {
 	public void revealAllBombs() {
 		for (int y = 0; y < TOTAL_ROWS; y++) {
 			for (int x = 0; x < TOTAL_COLUMNS; x++) {
-
 				if(isMine(x,y)) {
 					colorArray[x][y] = Color.BLACK;
 				}
@@ -180,7 +199,7 @@ public class MyPanel extends JPanel {
 		g.setColor(bgColor);
 		g.fillRect(x1, y1, width + 1, height + 1);
 
-		//Draw the grid minus the bottom row (which has only one cell)
+		//Draw the grid
 		g.setColor(Color.BLACK);
 		for (int y = 0; y <= TOTAL_ROWS; y++) {
 			g.drawLine(x1 + GRID_X, y1 + GRID_Y + (y * (INNER_CELL_SIZE + 1)), x1 + GRID_X + ((INNER_CELL_SIZE + 1) * TOTAL_COLUMNS), y1 + GRID_Y + (y * (INNER_CELL_SIZE + 1)));
@@ -202,7 +221,7 @@ public class MyPanel extends JPanel {
 		g.setFont(times);
 		for (int i = 0;  i< TOTAL_COLUMNS;  i++) {
 			for (int j = 0; j < TOTAL_ROWS; j++) {
-				if(isFlagged(i,j)){
+				if(isFlagged(i,j)) {
 					g.setColor(Color.RED);
 				}
 				else if (!isMine(i,j) && !isCovered(i,j) && colorArray[i][j] != Color.RED) {
@@ -291,5 +310,4 @@ public class MyPanel extends JPanel {
 		}
 		return y;
 	}
-
 }

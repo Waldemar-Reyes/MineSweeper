@@ -38,7 +38,6 @@ public class MyMouseAdapter extends MouseAdapter {
 			break;
 		}
 		case 3:	{	//Right mouse button
-			//Do nothing
 			Component c = e.getComponent();
 			while (!(c instanceof JFrame)) {
 				c = c.getParent();
@@ -61,8 +60,7 @@ public class MyMouseAdapter extends MouseAdapter {
 			myPanel.repaint();
 			break;
 		}
-		default:    //Some other button (2 = Middle mouse button, etc.)
-			//Do nothing
+		default:    //Some other button
 			break;
 		}
 	}
@@ -77,7 +75,7 @@ public class MyMouseAdapter extends MouseAdapter {
 				}
 			}
 			JFrame myFrame = (JFrame)c;
-			MyPanel myPanel = (MyPanel) myFrame.getContentPane().getComponent(0);  //Can also loop among components to find MyPanel
+			MyPanel myPanel = (MyPanel) myFrame.getContentPane().getComponent(0);
 			Insets myInsets = myFrame.getInsets();
 			int x1 = myInsets.left;
 			int y1 = myInsets.top;
@@ -104,19 +102,21 @@ public class MyMouseAdapter extends MouseAdapter {
 							myPanel.floodFillAdjacent(gridX, gridY);
 							myPanel.countMines(gridX, gridY);
 							myPanel.colorArray[gridX][gridY] = pressedCell;
-							myPanel.repaint();
 							if(myPanel.checkWin(myPanel.counterNonMines())){
-								System.out.println("WON");
 								myPanel.playerFinished = true;
+								myPanel.endMessage = "You won! :)";
+								myPanel.resetMineField();
 							}
+							myPanel.repaint();
 						}
 						//Player lost!
-						// Changes the color to Black and the person loses the game
 						else if (myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 1;
+							// Changes the color to Black and the person loses the game.
 							myPanel.revealAllBombs();
+							myPanel.playerFinished=true;
+							myPanel.endMessage = "You lost! :(";
 							myPanel.repaint();
-							myPanel.playerFinished = true;
 						}
 					}
 				}
@@ -185,8 +185,7 @@ public class MyMouseAdapter extends MouseAdapter {
 			// 4 = flagged | mine
 			break;
 		}
-		default:    //Some other button (2 = Middle mouse button, etc.)
-			//Do nothing
+		default:    //Some other button
 			break;
 		}
 	}

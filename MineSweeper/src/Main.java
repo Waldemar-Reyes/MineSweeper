@@ -16,26 +16,27 @@ public class Main {
 
 		myFrame.setVisible(true);
 
-		while(!myPanel.playerFinished) {
+		while(!myPanel.playerFinished()) {
 			myFrame.repaint();
 		}
 
-		Object[] options = {"Retry Again", "Quit"};
+		Object[] options = {"Play Again!", "Quit"};
 		int n = JOptionPane.showOptionDialog(myFrame,
-				"Do you want to try again or quit?",
-				"End of Game",
+				myPanel.endMessage + "\nDo you want to play again or quit?",
+				"End of Game.",
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE,
-				null,     //do not use a custom Icon
-				options,  //the titles of buttons
-				options[0]); //default button title
-		System.out.println(n);
-
+				null,
+				options,
+				options[0]);
 		if (n == 0) {
-			//Restart
+			myFrame.dispose();
+			myPanel.resetMineField();
+			myPanel.repaint();
+			main(args);
 		}
 		else {
 			System.exit(0);
-		};
+		}
 	}
 }
