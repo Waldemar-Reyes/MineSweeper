@@ -13,13 +13,16 @@ public class MyPanel extends JPanel {
 	private static final int INNER_CELL_SIZE = 29;
 	private static final int TOTAL_COLUMNS = 9;
 	private static final int TOTAL_ROWS = 9;
+	private static int numberOfMines =10;
 	private Random generator = new Random();
 	public int x = -1;
 	public int y = -1;
+	 
 	public int mouseDownGridX = 0;
 	public int mouseDownGridY = 0;
 	public Color[][] colorArray = new Color[TOTAL_COLUMNS][TOTAL_ROWS];
 	public int[][] mineArray = new int[TOTAL_COLUMNS][TOTAL_ROWS];
+	public Color pressedCellColor = new Color(177, 177, 177);
 	public MyPanel() {   //This is the constructor... this code runs first to initialize
 		if (INNER_CELL_SIZE + (new Random()).nextInt(1) < 1) {	//Use of "random" to prevent unwanted Eclipse warning
 			throw new RuntimeException("INNER_CELL_SIZE must be positive!");
@@ -30,27 +33,30 @@ public class MyPanel extends JPanel {
 		if (TOTAL_ROWS + (new Random()).nextInt(1) < 3) {	//Use of "random" to prevent unwanted Eclipse warning
 			throw new RuntimeException("TOTAL_ROWS must be at least 3!");
 		}
-		//		for (int x = 0; x < TOTAL_COLUMNS; x++) {   //Top row
-		//			colorArray[x][0] = Color.LIGHT_GRAY;
-		//		}
-		//		for (int y = 0; y < TOTAL_ROWS; y++) {   //Left column
-		//			colorArray[0][y] = Color.LIGHT_GRAY;
-		//		}
-		//		Color cellColor = new Color(205, 205, 205);
+	
 		for (int x = 0; x < TOTAL_COLUMNS; x++) {   //The rest of the grid
 			for (int y = 0; y < TOTAL_ROWS; y++) {
 				colorArray[x][y] = Color.WHITE;
 			}
 		}
+		
 		//Paint Mines
 		int counter = 0;
 		do {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
+			if(repeatedMines(x, y)){
+				continue;
+			}
 			mineArray[x][y] = 1;
-			colorArray[x][y] = Color.BLACK;
+			
+			colorArray[x][y] = Color.WHITE;
+			
+			
 			counter++;
-		} while (counter < 10);
+			
+			
+		} while (counter < numberOfMines);
 
 		//Paint Numbers
 		//		do {
@@ -80,12 +86,33 @@ public class MyPanel extends JPanel {
 			}
 		}
 	}
+	public boolean repeatedMines(int x, int y){
+		return (colorArray[x][y].equals(Color.BLACK));
+	}
 	//1 & 4 are mines
 	public boolean isMine(int x, int y){
 		return (mineArray[x][y]==1 || mineArray[x][y]==4);
 		
 	}
-
+//	public void resetGameBoard(){
+//		for (int y = 0; y < TOTAL_ROWS; y++) {
+//			for (int x = 0; x < TOTAL_COLUMNS; x++) {
+//				
+//			}
+//		}
+//	}
+public int counterNonMines(){
+	int countNonMines=0;
+	for (int y = 0; y < TOTAL_ROWS; y++) {
+		for (int x = 0; x < TOTAL_COLUMNS; x++) {
+			if(colorArray[x][y].equals(pressedCellColor)){
+				countNonMines++;
+			}
+		}
+	}
+	System.out.println(countNonMines);
+	return countNonMines;
+}
 	public boolean isCovered(int x, int y) {
 		return (colorArray[x][y].equals(Color.WHITE));
 	}
@@ -102,6 +129,17 @@ public class MyPanel extends JPanel {
 			}
 		}
 		return (!isMine(x,y)&&isCovered(x,y));
+	}
+	// 0 = no mine
+				// 1 = mine
+				// 2 = played
+				// 3 = flagged | no mine
+				// 4 = flagged | mine
+	public boolean isFlagged(int x, int y){
+		return (mineArray[x][y]==3 || mineArray[x][y]==4);
+	}
+	public boolean checkWin(int checkNumber){
+		return (checkNumber==TOTAL_COLUMNS*TOTAL_ROWS-numberOfMines);
 	}
 	/* The countMines method counts the mines that are adjacent to the selected cell.
 	The approach is similar to that of finding the adjacent cell in a Cartesian plane.
@@ -122,22 +160,43 @@ public class MyPanel extends JPanel {
 				}
 			}
 		}
-		System.out.println(counter);
+		
 		return counter;  
 	}
+	// Implementation of the flood fill algorithm
 	public void floodFillAdjacent(int x, int y){
-		Color pressedCell = new Color(177, 177, 177);
+		
 		if(isFillable(x,y) && countMines(x,y)==0){
-			colorArray[x][y]= pressedCell;
+			colorArray[x][y]= pressedCellColor;
+			
+			
 			floodFillAdjacent( x+1, y );
 		    floodFillAdjacent( x-1, y );
-		    floodFillAdjacent( x, y-1 );
 		    floodFillAdjacent( x, y+1 );
+		    floodFillAdjacent( x, y-1 );
+		    
 		}
 		else if (countMines(x,y)>0){
-			colorArray[x][y]= pressedCell;
+			
+			
+			
+			colorArray[x][y]= pressedCellColor;
+			
 		}
 		else return;
+	}
+	
+	public void revealAllBombs(){
+		for (int y = 0; y < TOTAL_ROWS; y++) {
+			for (int x = 0; x < TOTAL_COLUMNS; x++){
+				
+				if(isMine(x,y)){
+					colorArray[x][y] = Color.BLACK;
+				}
+			}
+	
+		
+		}
 	}
 
 	public void paintComponent(Graphics g) {
@@ -175,11 +234,14 @@ public class MyPanel extends JPanel {
 			}
 		}
 
-		Font times = new Font("TimesRoman", Font.PLAIN, 22);
+		Font times = new Font("Arial", Font.PLAIN, 22);
 		g.setFont(times);
 		for (int i = 0;  i< TOTAL_COLUMNS;  i++) {
 			for (int j = 0; j < TOTAL_ROWS; j++) {
-				if (!isMine(i,j) && !isCovered(i,j)) {
+				if(isFlagged(i,j)){
+					g.setColor(Color.RED);
+				}
+			else if (!isMine(i,j) && !isCovered(i,j)&&colorArray[i][j]!=Color.RED) {
 					g.setColor(Color.MAGENTA);
 					switch(countMines(i,j)) {
 					case 0:

@@ -3,6 +3,7 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JOptionPane;
 //import java.util.Random;
 
 import javax.swing.JFrame;
@@ -71,6 +72,7 @@ public class MyMouseAdapter extends MouseAdapter {
 		}
 	}
 	public void mouseReleased(MouseEvent e) {
+		int counter =0;
 		switch (e.getButton()) {
 		case 1:	{	//Left mouse button
 			Component c = e.getComponent();
@@ -94,8 +96,9 @@ public class MyMouseAdapter extends MouseAdapter {
 			int gridY = myPanel.getGridY(x, y);
 
 			if ((myPanel.mouseDownGridX == -1) || (myPanel.mouseDownGridY == -1)) {
-				//Had pressed outside
-				//Do nothing
+				
+				
+				
 			} else {
 				if ((gridX == -1) || (gridY == -1)) {
 					//Is releasing outside
@@ -113,14 +116,19 @@ public class MyMouseAdapter extends MouseAdapter {
 							myPanel.floodFillAdjacent(gridX, gridY);
 							myPanel.countMines(gridX, gridY);
 							myPanel.colorArray[gridX][gridY] = pressedCell;
+							if(myPanel.checkWin(myPanel.counterNonMines())){
+								JOptionPane.showMessageDialog(null, "You won! :) ", "", JOptionPane.WARNING_MESSAGE);
+							}
 							myPanel.repaint();
 						}
 						//Player lost!
 						else if (myPanel.isMine(gridX, gridY)) {
 							myPanel.mineArray[gridX][gridY] = 1;
 							// Changes the color to Black and the person loses the game.
-							myPanel.colorArray[gridX][gridY] = Color.BLACK;
+							myPanel.revealAllBombs();
+							
 							myPanel.repaint();
+							JOptionPane.showMessageDialog(null, "You lost :( ", "", JOptionPane.WARNING_MESSAGE);
 						}
 						//						else if (myPanel.mineArray[gridX][gridY] == 2) {
 						//						}
