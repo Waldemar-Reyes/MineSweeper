@@ -45,7 +45,7 @@ public class MyPanel extends JPanel {
 		do {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
-			if(repeatedMines(x, y)){
+			if(isMine(x, y)){
 				continue;
 			}
 			mineArray[x][y] = 1;
@@ -67,9 +67,7 @@ public class MyPanel extends JPanel {
 	public boolean playerFinished() { return playerFinished; }
 	public String endMessage() { return endMessage; }
 
-	public boolean repeatedMines(int x, int y) {
-		return (colorArray[x][y].equals(Color.BLACK));
-	}
+	
 	// 1 = mine ** 4 = flagged | mine
 	public boolean isMine(int x, int y) {
 		return (mineArray[x][y] == 1 || mineArray[x][y] == 4);
@@ -102,11 +100,11 @@ public class MyPanel extends JPanel {
 		do {
 			int x = generator.nextInt(9);
 			int y = generator.nextInt(9);
-			if(repeatedMines(x, y)) {
+			if(isMine(x, y)) {
 				continue;
 			}
 			mineArray[x][y] = 1;
-			colorArray[x][y] = Color.BLACK;
+			
 			counter++;
 		} while (counter < numberOfMines);
 	}
